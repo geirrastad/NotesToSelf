@@ -241,12 +241,12 @@ OR, if you installed into the /opt directory:
 ```
    echo "source /opt/ros/kinetic/setup.bash" >> ~/.bashrc
 ```
-
+NOTE: This did not work
 ## Notes
 
 Following this guide should successfully build all 198 packages in Kinetic.
 However, if something crashes during build, please remove (rm -rf) the package directory from both build_isolated and devel_isolated before re-running build. Mysterious Things may happen if you don't.
-My machine crashed everytime I used 2 CPUS with 4 cores (I'm building and testing in VMWare Workstation 14). With 1 CPU, 4 cores and 20Gb RAM it worked flawlessly. 
+My machine crashed once or twice during build. I'm building and testing in VMWare Workstation 14, and I suspect this piece of crap is the culprit. It crashes every now and then on other VMs as well.
 
 
 **That's it!. You should now have a functioning Kinetic Kane installation on Ubuntu 18.04 LTS**
