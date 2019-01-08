@@ -247,7 +247,8 @@ OR, if you installed into the /opt directory:
 
 Following this guide should successfully build all 198 packages in Kinetic.
 However, if something crashes during build, please remove (rm -rf) the package directory from both build_isolated and devel_isolated before re-running build. Mysterious Things may happen if you don't.
-My machine crashed once or twice during build. I'm building and testing in VMWare Workstation 14, and I suspect this piece of crap is the culprit. It crashes every now and then on other VMs as well.
+My machine crashed every time during a build. I'm building and testing in VMWare Workstation 14.
+UPDATE: After disabling Spectre and Meltdown I successfully could build it all in one go. (If you do this, remember to enable the patches after the build). Could be coincidental...
 
 
 **That's it!. You should now have a functioning Kinetic Kane installation on Ubuntu 18.04 LTS**
