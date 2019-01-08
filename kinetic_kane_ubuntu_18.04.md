@@ -3,7 +3,7 @@
 This document will guide you through the process of installing Kinetic Kane from source to your Ubuntu 18.04 LTS. If you are new to ROS, you should probably gor for a pre-built Melodic installation.
 
 A few notes before you embark on this mission:
-   The Kinetik Desktop-full installation WILL fail, as I have not bothered to fix it (did not need the extra stuff). There are some dependencies that fail and you will manually have to build the components yourselves.
+   The Kinetic Desktop-full installation WILL fail, as I have not bothered to fix it (did not need the extra stuff). There are some dependencies that fail and you will manually have to build the components yourselves.
    Also, I have not done a regression test on ROS. It still may unexpectedly fail. If it do I will make a note of what went wrong here (or possibly a fix).
    
 
