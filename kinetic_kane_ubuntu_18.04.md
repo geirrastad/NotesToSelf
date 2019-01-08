@@ -52,12 +52,16 @@ rosbag: No definition of [python-imaging] for OS version [bionic]
 
 ## 2. Fix Kinetic dependencies
 
+We need to fix the two issues from above (plus one hidden that will bite you after the next step)
+
 1) cd to your home directory and Clone the "rosdistro" git:
-    git clone https://github.com/ros/rosdistro
+```
+$ cd ~
+$ git clone https://github.com/ros/rosdistro
+$ cd rosdistro/rosdep
+```
 
-2) cd rosdistro/rosdep
-
-3) Edit the base.yaml file. Change this area
+2) Edit the base.yaml file. Change this area
 ```
 gazebo7:
   arch: [gazebo]
@@ -139,8 +143,11 @@ And change the bionic entry to read python-rosdep2. Like this:
 Save and exit!
 
 5) Now go here:
-    cd /etc/ros/rosdep/sources.list.d
-    
+```
+$ cd /etc/ros/rosdep/sources.list.d
+$ sudo nano 20-default.list
+```
+   
     and comment out two lines in the 20-default.list:
     
 ```
@@ -165,8 +172,8 @@ gbpdistro https://raw.githubusercontent.com/ros/rosdistro/master/releases/fuerte
 
 6) Create a new file '10-mydistro.list' with the following content:
 ```
-yaml file://<home_dir>/rosdistro/rosdep/base.yaml
-yaml file://<home_dir>/rosdistro/rosdep/python.yaml
+yaml file:/<home_dir>/rosdistro/rosdep/base.yaml
+yaml file:/<home_dir>/rosdistro/rosdep/python.yaml
 ```
 Remember to replace <home_dir> with your actual home directory!
 
@@ -177,12 +184,13 @@ $ rosdep update
 
 8) You can now check ros dependencies by running:
 ```
- rosdep install --from-paths src --ignore-src --rosdistro kinetic -y
+$ cd ~/ros_catkin_ws
+$ rosdep install --from-paths src --ignore-src --rosdistro kinetic -y
 ```
 
 9) It is time to install other dependencies. Run the following commands:
 ```
-$ sudo apt install libopencv-core3.2 libvtk6.3-qt libbullet-dev libtf2-bullet-dev python-pil libvtk6-qt-dev python-pip gazebo9
+$ sudo apt install libopencv-core3.2 libopencv-core-dev libopencv-dev libbullet-dev libtf2-bullet-dev python-pil python-pip gazebo9
 ```
     
 The environment is now prepared for Kinetic source installation.
@@ -190,7 +198,7 @@ The environment is now prepared for Kinetic source installation.
 ## 3. Updating Kinetic Kane Sources
 
 
-3) Now some of these ROS packages will fail, and we will have to swap with newest git versions
+1) Some of the downloaded ROS source packages will fail, and we will have to swap with newest git versions
 ```
 $ cd ~
 $ git clone https://github.com/ros/rospack
@@ -209,27 +217,23 @@ $ mv rospack/ geometry2/ roscpp_core/ ros_kinetic/src/
 We have now updated these modules to the latest releases. Note: this is mostly the Melodic versions of these modules. 
 should try to checkout to kineticcmake 
    
-4) Now resolve ROS dependencies
-```
-$ cd ~/ros_kinetic
-$ rosdep install --from-paths src --ignore-src --rosdistro kinetic -y
-```
-
-5) Now you need to update some packages. Run:
+2) Now you need to update some packages. Run:
 ```
 $ sudo pip install --upgrade catkin_pkg_modules
 ```
 
-5) Then it is time to build Kinetic. This takes some time to finish, so go and make a cup or coffee after running:
+3) Then it is time to build Kinetic. This takes some time to finish, so go and make a cup or coffee after running:
 ```
+$ cd ~
 $ ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release
 ```
 OR, if you want to put Kinetic in /opt:
 ```
+$ cd ~
 $ sudo ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release --install-space /opt/ros/kinetic
 ```
 
-6) Finally update .basrc to automatically set up your environment (optional):
+4) Finally update .basrc to automatically set up your environment (optional):
 ```
    echo "source ~/ros_kinetic/install_isolated/setup.bash" >> ~/.bashrc
 ```
@@ -237,5 +241,12 @@ OR, if you installed into the /opt directory:
 ```
    echo "source /opt/ros/kinetic/setup.bash" >> ~/.bashrc
 ```
+
+## Notes
+
+Following this guide should successfully build all 198 packages in Kinetic.
+However, if something crashes during build, please remove (rm -rf) the package directory from both build_isolated and devel_isolated before re-running build. Mysterious Things may happen if you don't.
+My machine crashed everytime I used 2 CPUS with 4 cores (I'm building and testing in VMWare Workstation 14). With 1 CPU, 4 cores and 20Gb RAM it worked flawlessly. 
+
 
 **That's it!. You should now have a functioning Kinetic Kane installation on Ubuntu 18.04 LTS**
