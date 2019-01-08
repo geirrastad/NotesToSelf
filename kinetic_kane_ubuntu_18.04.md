@@ -9,19 +9,55 @@ A few notes before you embark on this mission:
 
 I used the [Installing from source](http://wiki.ros.org/kinetic/Installation/Source) guide, but it will fail if you try this on 18.04. It was made for 16.04. Now let's start!
 
-## Getting ready
+## 1. First steps
+First you must install Ubuntu and download ROS Source installation files
+
 1) [Download and install Ubuntu](https://www.ubuntu.com/download/desktop). Make it a plain installation, and adapt to your language and default settings
 
-2) sudo apt-get install python-rosdep python-rosinstall-generator python-wstool python-rosinstall build-essential
+2) Run this command to set up Kinetick Source Installation
+```
+$ sudo apt-get install python-rosdep python-rosinstall-generator python-wstool python-rosinstall build-essential
+```
 
-3) sudo rosdep init (you do not need to run rosdep update after this command)
+3) Initialize source distro
+```
+$ sudo rosdep init
+$ rosdep update
+```
 
-4) cd to your home directory and Clone the "rosdistro" git:
+4) Create Kinetic workspace
+```
+$ mkdir ~/ros_catkin_ws
+$ cd ~/ros_catkin_ws
+```
+
+5) Fetch the Desktop install:
+```
+$ rosinstall_generator desktop --rosdistro kinetic --deps --wet-only --tar > kinetic-desktop-wet.rosinstall
+$ wstool init -j8 src kinetic-desktop-wet.rosinstall
+```
+
+Now, trying to resolve dependencies with:
+```
+ rosdep install --from-paths src --ignore-src --rosdistro kinetic -y
+```
+will fail with the following errors:
+```
+ERROR: the following packages/stacks could not have their rosdep keys resolved
+to system dependencies:
+rqt_bag_plugins: No definition of [python-imaging] for OS version [bionic]
+opencv3: No definition of [libvtk-qt] for OS version [bionic]
+rosbag: No definition of [python-imaging] for OS version [bionic]
+```
+
+## 2. Fix Kinetic dependencies
+
+1) cd to your home directory and Clone the "rosdistro" git:
     git clone https://github.com/ros/rosdistro
 
-5) cd rosdistro/rosdep
+2) cd rosdistro/rosdep
 
-6) Edit the base.yaml file. Change this area
+3) Edit the base.yaml file. Change this area
 ```
 gazebo7:
   arch: [gazebo]
@@ -74,7 +110,7 @@ By this:
 
 save the file!
 
-7) Now edit the python.yaml and locate this area:
+4) Now edit the python.yaml and locate this area:
 ```
   ubuntu:
     '*': [python-pil]
@@ -102,7 +138,7 @@ And change the bionic entry to read python-rosdep2. Like this:
 
 Save and exit!
 
-8) Now go here:
+5) Now go here:
     cd /etc/ros/rosdep/sources.list.d
     
     and comment out two lines in the 20-default.list:
@@ -127,30 +163,32 @@ gbpdistro https://raw.githubusercontent.com/ros/rosdistro/master/releases/fuerte
 # newer distributions (Groovy, Hydro, ...) must not be listed anymore, they are being fetched from the rosdistro index.yaml instead
 ```
 
-9) Create a new file '10-mydistro.list' with the following content:
+6) Create a new file '10-mydistro.list' with the following content:
 ```
 yaml file://<home_dir>/rosdistro/rosdep/base.yaml
 yaml file://<home_dir>/rosdistro/rosdep/python.yaml
 ```
 Remember to replace <home_dir> with your actual home directory!
 
-10) run "rosdep update"
+7) Now you must update ros package source lists
+```
+$ rosdep update
+```
 
-11) Now it is time to install dependencies. Run the following commands:
+8) You can now check ros dependencies by running:
+```
+ rosdep install --from-paths src --ignore-src --rosdistro kinetic -y
+```
 
-   sudo apt install libopencv-core3.2 libvtk6.3-qt libbullet-dev libtf2-bullet-dev python-pil libvtk6-qt-dev python-pip
+9) It is time to install other dependencies. Run the following commands:
+```
+$ sudo apt install libopencv-core3.2 libvtk6.3-qt libbullet-dev libtf2-bullet-dev python-pil libvtk6-qt-dev python-pip gazebo9
+```
     
 The environment is now prepared for Kinetic source installation.
 
-## Installing Kinetic Kane Sources
+## 3. Updating Kinetic Kane Sources
 
-1) mkdir ~/ros_kinetic
-
-2) Fetch the Desktop install:
-```
-$ rosinstall_generator desktop --rosdistro kinetic --deps --wet-only --tar > kinetic-desktop-wet.rosinstall
-$ wstool init -j8 src kinetic-desktop-wet.rosinstall
-```
 
 3) Now some of these ROS packages will fail, and we will have to swap with newest git versions
 ```
