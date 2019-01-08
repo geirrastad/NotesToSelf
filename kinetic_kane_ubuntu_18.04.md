@@ -182,3 +182,14 @@ OR, if you want to put Kinetic in /opt:
 ```
 $ sudo ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release --install-space /opt/ros/kinetic
 ```
+
+6) Finally update .basrc to automatically set up your environment (optional):
+```
+   echo "source ~/ros_kinetic/install_isolated/setup.bash" >> ~/.bashrc
+```
+OR, if you installed into the /opt directory:
+```
+   echo "source /opt/ros/kinetic/setup.bash" >> ~/.bashrc
+```
+
+**That's it!. You should now have a functioning Kinetic Kane installation on Ubuntu 18.04 LTS**
