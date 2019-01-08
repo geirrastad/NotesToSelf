@@ -178,3 +178,7 @@ $ sudo pip install --upgrade catkin_pkg_modules
 ```
 $ ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release
 ```
+OR, if you want to put Kinetic in /opt:
+```
+$ sudo ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release --install-space /opt/ros/kinetic
+```
