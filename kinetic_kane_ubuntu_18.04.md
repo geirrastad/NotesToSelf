@@ -232,7 +232,7 @@ OR, if you want to put Kinetic in /opt:
 $ cd ~
 $ sudo ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release --install-space /opt/ros/kinetic
 ```
-NOTE: This did not work. Had to build without --install-space, then ran the above command.
+
 
 4) Finally update .basrc to automatically set up your environment (optional):
 ```
