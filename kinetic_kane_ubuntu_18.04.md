@@ -152,16 +152,24 @@ $ rosinstall_generator desktop --rosdistro kinetic --deps --wet-only --tar > kin
 $ wstool init -j8 src kinetic-desktop-wet.rosinstall
 ```
 
-3) Now two of these ROS packages will fail, and we will have to swap with newest git versions: rospack and geometry2
+3) Now some of these ROS packages will fail, and we will have to swap with newest git versions
 ```
 $ cd ~
 $ git clone https://github.com/ros/rospack
 $ git clone https://github.com/ros/geometry2
+$ git clone https://github.com/ros/roscpp_core
+$ git clone https://github.com/ros/pluginlib
+$ git clone https://github.com/ros-visualization/qt_gui_core
+
 $ rm -rf ~/ros_kinetic/src/rospack
 $ rm -rf ~/ros_kinetic/src/geometry2
-$ mv rospack/ geometry2/ ros_kinetic/src/
+$ rm -rf ~/ros_kinetic/src/roscpp_core
+$ rm -rf ~/ros_kinetic/src/pluginlib
+$ rm -rf ~/ros_kinetic/src/qt_gui_core
+$ mv rospack/ geometry2/ roscpp_core/ ros_kinetic/src/
 ```
-We have now updated rospack and geometry2 to the latest releases
+We have now updated these modules to the latest releases. Note: this is mostly the Melodic versions of these modules. 
+should try to checkout to kineticcmake 
    
 4) Now resolve ROS dependencies
 ```
