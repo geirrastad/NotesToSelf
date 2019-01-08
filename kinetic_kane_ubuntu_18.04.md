@@ -87,6 +87,19 @@ And add a line like this:
     bionic: [python-pil]
     artful: [python-imaging]
 ```
+The find this area:
+```
+  ubuntu:
+    artful: [python-rosdep]
+    bionic: [python-rosdep]
+```
+And change the bionic entry to read python-rosdep2. Like this:
+```
+  ubuntu:
+    artful: [python-rosdep]
+    bionic: [python-rosdep2]
+```
+
 Save and exit!
 
 8) Now go here:
@@ -125,7 +138,7 @@ Remember to replace <home_dir> with your actual home directory!
 
 11) Now it is time to install dependencies. Run the following commands:
 
-   sudo apt install libopencv-core3.2 libvtk6.3-qt libbullet-dev libtf2-bullet-dev python-pil libvtk6-qt-dev
+   sudo apt install libopencv-core3.2 libvtk6.3-qt libbullet-dev libtf2-bullet-dev python-pil libvtk6-qt-dev python-pip
     
 The environment is now prepared for Kinetic source installation.
 
@@ -150,8 +163,18 @@ $ mv rospack/ geometry2/ ros_kinetic/src/
 ```
 We have now updated rospack and geometry2 to the latest releases
    
-4) Now resolv ROS dependencies
+4) Now resolve ROS dependencies
 ```
 $ cd ~/ros_kinetic
 $ rosdep install --from-paths src --ignore-src --rosdistro kinetic -y
+```
+
+5) Now you need to update some packages. Run:
+```
+$ sudo pip install --upgrade catkin_pkg_modules
+```
+
+5) Then it is time to build Kinetic. This takes some time to finish, so go and make a cup or coffee after running:
+```
+$ ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release
 ```
