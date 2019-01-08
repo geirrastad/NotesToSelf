@@ -203,16 +203,10 @@ The environment is now prepared for Kinetic source installation.
 $ cd ~
 $ git clone https://github.com/ros/rospack
 $ git clone https://github.com/ros/geometry2
-$ git clone https://github.com/ros/roscpp_core
-$ git clone https://github.com/ros/pluginlib
-$ git clone https://github.com/ros-visualization/qt_gui_core
 
 $ rm -rf ~/ros_kinetic/src/rospack
 $ rm -rf ~/ros_kinetic/src/geometry2
-$ rm -rf ~/ros_kinetic/src/roscpp_core
-$ rm -rf ~/ros_kinetic/src/pluginlib
-$ rm -rf ~/ros_kinetic/src/qt_gui_core
-$ mv rospack/ geometry2/ roscpp_core/ ros_kinetic/src/
+$ mv rospack/ geometry2/ ros_kinetic/src/
 ```
 We have now updated these modules to the latest releases. Note: this is mostly the Melodic versions of these modules. 
 should try to checkout to kineticcmake 
