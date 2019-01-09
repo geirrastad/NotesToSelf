@@ -204,9 +204,9 @@ $ cd ~
 $ git clone https://github.com/ros/rospack
 $ git clone https://github.com/ros/geometry2
 
-$ rm -rf ~/ros_kinetic/src/rospack
-$ rm -rf ~/ros_kinetic/src/geometry2
-$ mv rospack/ geometry2/ ros_kinetic/src/
+$ rm -rf ~/ros_catkin_ws/src/rospack
+$ rm -rf ~/ros_catkin_ws/src/geometry2
+$ mv rospack/ geometry2/ ros_catkin_ws/src/
 ```
 We have now updated these modules to the latest releases. Note: You should clone head and not target the kinetic branch/tag 
    
@@ -229,7 +229,7 @@ $ sudo ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Releas
 
 4) Finally update .basrc to automatically set up your environment (optional):
 ```
-   echo "source ~/ros_kinetic/install_isolated/setup.bash" >> ~/.bashrc
+   echo "source ~/ros_catkin_ws/install_isolated/setup.bash" >> ~/.bashrc
 ```
 OR, if you installed into the /opt directory:
 ```
