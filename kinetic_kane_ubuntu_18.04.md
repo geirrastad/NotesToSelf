@@ -208,8 +208,7 @@ $ rm -rf ~/ros_kinetic/src/rospack
 $ rm -rf ~/ros_kinetic/src/geometry2
 $ mv rospack/ geometry2/ ros_kinetic/src/
 ```
-We have now updated these modules to the latest releases. Note: this is mostly the Melodic versions of these modules. 
-should try to checkout to kineticcmake 
+We have now updated these modules to the latest releases. Note: You should clone head and not target the kinetic branch/tag 
    
 2) Now you need to update some packages. Run:
 ```
