@@ -217,12 +217,12 @@ $ sudo pip install --upgrade catkin_pkg_modules
 
 3) Get ready to build Kinetic. This takes some time to finish, so go and make a cup or coffee after running:
 ```
-$ cd ~
+$ cd ~/ros_catkin_ws
 $ ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release
 ```
 OR, if you want to put Kinetic in /opt:
 ```
-$ cd ~
+$ cd ~/ros_catkin_ws
 $ sudo ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release --install-space /opt/ros/kinetic
 ```
 
