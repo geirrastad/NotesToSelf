@@ -57,8 +57,18 @@ Get the file: iaam_ros_modules.tgz, then:
 $ mkdir ~/iaam_ros
 $ cd ~/iaam_ros
 $ tar -xzvf <path_to_iaam_ros_modules.tgz>/iaam_ros_modules.tgz
-$ source install/setup.bash
 ```
+
+NOTE: If you are running this on Kinetic, you will have to edit the install/_setup_util.py
+Locate the line:
+```
+CMAKE_PREFIX_PATH = '/opt/ros/melodic'.split(';')
+```
+and change it to:
+```
+CMAKE_PREFIX_PATH = '/opt/ros/kinetic'.split(';')
+```
+
 
 ## 4. Running IAAM Ros
 
@@ -70,6 +80,7 @@ Config files are here:
 
 If you are running Melodic you can start by running:
 ```
+$ source install/setup.bash
 $ roslaunch install/share/iaam/iaam.launch
 ```
 
