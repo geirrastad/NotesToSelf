@@ -195,7 +195,7 @@ $ sudo apt install libopencv-core3.2 libopencv-core-dev libopencv-dev libbullet-
     
 The environment is now prepared for Kinetic source installation.
 
-## 3. Updating Kinetic Kane Sources
+## 3. Building Kinetic Kane 
 
 
 1) Some of the downloaded ROS source packages will fail, and we will have to swap with newest git versions
@@ -215,7 +215,7 @@ We have now updated these modules to the latest releases. Note: You should clone
 $ sudo pip install --upgrade catkin_pkg_modules
 ```
 
-3) Then it is time to build Kinetic. This takes some time to finish, so go and make a cup or coffee after running:
+3) Get ready to build Kinetic. This takes some time to finish, so go and make a cup or coffee after running:
 ```
 $ cd ~
 $ ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release
