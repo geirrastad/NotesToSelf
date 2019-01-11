@@ -55,6 +55,10 @@ For the Ultimate GPS Hat to function on a Pi3, we need to disable and shuffle ar
 $ sudo systemctl stop serial-getty@ttyAMA0.service
 $ sudo systemctl disable serial-getty@ttyAMA0.service
 ```
+NOTE: The above did not survive a boot on my system! I spent a couple of hours
+banging my head beacuse GPSD did not work. Then I happened to see "agetty" 
+claiming the ttyAMA0 device in "ps -ef". I dont know how to completely disable this, yet.
+
 Now edit the /boot/cmdline.txt file and remove the "console=serial0,115200"
 Original file:
 ```
@@ -126,3 +130,54 @@ Also remove or comment out any "*option ntp_servers*" in that file!
 
 3.10 ) Reboot!
 
+
+## 4. Setting up GPSD
+
+4.1) Install GPSD
+```
+$ sudo apt install gpsd gpsd-clients
+```
+
+Edit the /etc/defaults/gpsd and make sure it looks like this:
+```
+# Default settings for the gpsd init script and the hotplug wrapper.
+
+# Start the gpsd daemon automatically at boot time
+START_DAEMON="true"
+
+# Use USB hotplugging to add new USB devices automatically to the daemon
+USBAUTO="false"
+
+# Devices gpsd should collect to at boot time.
+# They need to be read/writeable, either by user gpsd or the group dialout.
+DEVICES="/dev/ttyAMA0 /dev/pps0"
+
+# Other options you want to pass to gpsd
+GPSD_OPTIONS="-n"
+```
+
+4.2) Configuring sysctl handlers
+
+```
+$ sudo systemctl daemon-reload
+$ sudo systemctl enable gpsd
+$ sudo systemctl start gpsd
+```
+
+4.3) Check status
+```
+$ systemctl status gpsd
+● gpsd.service - GPS (Global Positioning System) Daemon
+   Loaded: loaded (/lib/systemd/system/gpsd.service; indirect; vendor preset: enabled)
+   Active: active (running) since Fri 2019-01-11 15:43:59 CET; 3min 45s ago
+ Main PID: 747 (gpsd)
+   CGroup: /system.slice/gpsd.service
+           └─747 /usr/sbin/gpsd -N
+
+Jan 11 15:43:59 ntpserver01 systemd[1]: Started GPS (Global Positioning System) Daemon.
+
+```
+
+## 5. Finishing up
+
+If everything is AOK, then running gpsmon will give you a line
