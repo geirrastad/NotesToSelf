@@ -84,7 +84,34 @@ reboot your PI
 If everything is OK, you should be able to see the NMEA data on /dev/ttyAMA0
 
 ```
-$ cat /dev/ttyAMA0
+$ sudo cat /dev/ttyAMA0
+```
 
 
+3.6) Setting up PPS support
+
+Install the PPS tools
+```
+$ sudo apt-get install pps-tools
+```
+
+3.7) Enable PPS in the kernel
+
+Edit /boot/config.txt and add these lines at the bottom:
+```
+# enable GPS PPS
+dtoverlay=pps-gpio,gpiopin=4
+```
+
+Reboot to test PPS.
+
+3.8) Disable NTP support in DHCP
+
+Edit the /etc/dhcp/dhclient.conf, and remove the *"ntp-servers"* from the *request* string
+```
+request subnet-mask, broadcast-address, time-offset, routers,
+        domain-name, domain-name-servers, domain-search, host-name,
+        dhcp6.name-servers, dhcp6.domain-search,
+        netbios-name-servers, netbios-scope, interface-mtu,
+        rfc3442-classless-static-routes , *ntp-servers*;
 ```
