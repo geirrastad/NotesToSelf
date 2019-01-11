@@ -178,6 +178,19 @@ Jan 11 15:43:59 ntpserver01 systemd[1]: Started GPS (Global Positioning System) 
 
 ```
 
-## 5. Finishing up
+## 5. New NTP version
 
-If everything is AOK, then running gpsmon will give you a line
+It seems the NTP packaged for raspi does not support PPS out of the box. Download and install a new NTP
+```
+mkdir ~/ntp
+cd ~/ntp
+sudo apt install libcap-dev libssl-dev
+wget http://www.eecis.udel.edu/~ntp/ntp_spool/ntp4/ntp-4.2/ntp-4.2.8p12.tar.gz
+tar -xzvf ntp-4.2.8p12.tar.gz 
+cd ntp-4.2.8p12
+./configure --enable-linuxcaps
+make -j5
+sudo apt-get remove ntp
+sudo make install 
+
+```
