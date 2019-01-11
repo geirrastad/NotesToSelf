@@ -115,3 +115,14 @@ request subnet-mask, broadcast-address, time-offset, routers,
         netbios-name-servers, netbios-scope, interface-mtu,
         rfc3442-classless-static-routes , *ntp-servers*;
 ```
+
+Also remove or comment out any "*option ntp_servers*" in that file!
+
+ The delete these files:
+/etc/dhcp/dhclient-exit-hooks.d/ntp || /etc/dhcp/dhclient-exit-hooks.d/timesyncd
+/lib/dhcpcd/dhcpcd-hooks/50-ntp.conf
+/var/lib/ntp/ntp.conf.dhcp (might not exist)
+
+
+3.10 ) Reboot!
+
