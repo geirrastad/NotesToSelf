@@ -9,5 +9,10 @@
 4) pip install empy catkin_pkg
 
 You may now clone the iaam_ros2 sources and build
-NOTE: in src/CMakeLists.cmake you must comment out add_subdirectory(event_mapper) in first run!
-This should have been a separate project... time ... no time ...
+NOTE: After cleaning out the build directory, or when builing for the first time, please
+run:
+```
+mkdir build; cd build; cmake -D FRESH_BUILD=true ..; make
+cmake ..; make
+```
+This will create some dependencies for event_mapper.
