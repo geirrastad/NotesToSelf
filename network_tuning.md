@@ -14,6 +14,15 @@ What I need is:
 This document is work in progress, and is organized chronologically as I go along. I will
 sort this out later, if and when I find a solution.
 
-My first task: Getting static or better discovery, su subscribers immediately handles
+My first task: Getting static or better discovery, so subscribers immediately handles
 video frames.
 
+OK, FastRTPS supports automatic loading of 'DEFAULT_FASTRTPS_PROFILES.xml'
+this fil could contain all kinds of settings. Probably place it in same directory as executable.
+
+[Full description of xml](https://eprosima-fast-rtps.readthedocs.io/en/latest/xmlprofiles.html#examplexml)
+
+My XML ended up like this:
+```
+
+```
