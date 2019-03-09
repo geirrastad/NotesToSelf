@@ -1,2 +1,2 @@
-# ROS_stuff
-ROS notes
+# NotesToSelf
+A repository of stuff I had to write down ....
