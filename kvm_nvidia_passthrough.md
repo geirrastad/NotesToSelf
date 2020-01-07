@@ -214,10 +214,181 @@ Now, reboot. After a successful reboot check IOMMU group assignments with:
 $ for d in /sys/kernel/iommu_groups/*/devices/*; do n=${d#*/iommu_groups/*}; n=${n%%/*}; printf 'IOMMU Group %s ' "$n"; lspci -nns "${d##*/}"; done;
 ```
 
+Check that your devices are split into separate groups. My cards ended up in groups 15 and 16.
+```
+...
+IOMMU Group 15 01:00.0 VGA compatible controller [0300]: NVIDIA Corporation TU102 [GeForce RTX 2080 Ti] [10de:1e04] (rev a1)
+IOMMU Group 15 01:00.1 Audio device [0403]: NVIDIA Corporation TU102 High Definition Audio Controller [10de:10f7] (rev a1)
+IOMMU Group 15 01:00.2 USB controller [0c03]: NVIDIA Corporation TU102 USB 3.1 Controller [10de:1ad6] (rev a1)
+IOMMU Group 15 01:00.3 Serial bus controller [0c80]: NVIDIA Corporation TU102 UCSI Controller [10de:1ad7] (rev a1)
+IOMMU Group 16 02:00.0 VGA compatible controller [0300]: NVIDIA Corporation TU106 [GeForce RTX 2060 Rev. A] [10de:1f08] (rev a1)
+IOMMU Group 16 02:00.1 Audio device [0403]: NVIDIA Corporation TU106 High Definition Audio Controller [10de:10f9] (rev a1)
+IOMMU Group 16 02:00.2 USB controller [0c03]: NVIDIA Corporation TU106 USB 3.1 Host Controller [10de:1ada] (rev a1)
+IOMMU Group 16 02:00.3 Serial bus controller [0c80]: NVIDIA Corporation TU106 USB Type-C Port Policy Controller [10de:1adb] (rev a1)
+I
+...
+```
+
+I will pass through group 16 (My 2060 card), so I take note of the three device ids: 10de:10f9, 10de:1ada and 10de:1adb as I will use them in the next step
+
+# 5. Applying VFIO
+
+What is VFIO, and why do I need it?
+Shortly said: Virual Function I/O allows a VM direct access to a device. Without it the running kernel on the host machine will claim the device, and it cannot be passed through.
+
+## a) Get device IDs for the devices you want to pass through
+You need to find the device IDs for the GPU (and the GPUs Audio and USB device) you want to pass through.
+First get bus ID:
+```
+$ lspci
+```
+
+The output lists connected devices:
+```
+00:1f.2 Memory controller: Intel Corporation 200 Series/Z370 Chipset Family Power Management Controller
+00:1f.3 Audio device: Intel Corporation 200 Series PCH HD Audio
+00:1f.4 SMBus: Intel Corporation 200 Series/Z370 Chipset Family SMBus Controller
+00:1f.6 Ethernet controller: Intel Corporation Ethernet Connection (2) I219-V
+01:00.0 VGA compatible controller: NVIDIA Corporation TU102 [GeForce RTX 2080 Ti] (rev a1)
+01:00.1 Audio device: NVIDIA Corporation TU102 High Definition Audio Controller (rev a1)
+01:00.2 USB controller: NVIDIA Corporation TU102 USB 3.1 Controller (rev a1)
+01:00.3 Serial bus controller [0c80]: NVIDIA Corporation TU102 UCSI Controller (rev a1)
+02:00.0 VGA compatible controller: NVIDIA Corporation TU106 [GeForce RTX 2060 Rev. A] (rev a1)
+02:00.1 Audio device: NVIDIA Corporation TU106 High Definition Audio Controller (rev a1)
+02:00.2 USB controller: NVIDIA Corporation TU106 USB 3.1 Host Controller (rev a1)
+02:00.3 Serial bus controller [0c80]: NVIDIA Corporation TU106 USB Type-C Port Policy Controller (rev a1)
+03:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller SM981/PM981/PM983
+05:00.0 SATA controller: ASMedia Technology Inc. ASM1062 Serial ATA Controller (rev 02)
+06:00.0 USB controller: ASMedia Technology Inc. ASM2142 USB 3.1 Host Controller
+08:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller SM981/PM981/PM983
+09:00.0 USB controller: NEC Corporation uPD720200 USB 3.0 Host Controller (rev 03)
+```
+I want to use my 2060 card, so I note 02:00
+
+Then list device IDS:
+```
+$ lspci -vn -s 02:00
+```
+For my system it outputs these 4 devices:
+
+```
+02:00.0 0300: 10de:1f08 (rev a1) (prog-if 00 [VGA controller])
+	Subsystem: 1458:3fc2
+	Flags: bus master, fast devsel, latency 0, IRQ 183
+	Memory at dc000000 (32-bit, non-prefetchable) [size=16M]
+	Memory at a0000000 (64-bit, prefetchable) [size=256M]
+	Memory at b0000000 (64-bit, prefetchable) [size=32M]
+	I/O ports at d000 [size=128]
+	[virtual] Expansion ROM at dd000000 [disabled] [size=512K]
+	Capabilities: <access denied>
+	Kernel driver in use: nvidia
+	Kernel modules: nvidiafb, nouveau, nvidia_drm, nvidia
+
+02:00.1 0403: 10de:10f9 (rev a1)
+	Subsystem: 1458:3fc2
+	Flags: bus master, fast devsel, latency 0, IRQ 18
+	Memory at dd080000 (32-bit, non-prefetchable) [size=16K]
+	Capabilities: <access denied>
+	Kernel driver in use: snd_hda_intel
+	Kernel modules: snd_hda_intel
+
+02:00.2 0c03: 10de:1ada (rev a1) (prog-if 30 [XHCI])
+	Subsystem: 1458:3fc2
+	Flags: fast devsel, IRQ 132
+	Memory at b2000000 (64-bit, prefetchable) [size=256K]
+	Memory at b2040000 (64-bit, prefetchable) [size=64K]
+	Capabilities: <access denied>
+	Kernel driver in use: xhci_hcd
+
+02:00.3 0c80: 10de:1adb (rev a1)
+	Subsystem: 1458:3fc2
+	Flags: bus master, fast devsel, latency 0, IRQ 150
+	Memory at dd084000 (32-bit, non-prefetchable) [size=4K]
+	Capabilities: <access denied>
+	Kernel driver in use: nvidia-gpu
+	Kernel modules: i2c_nvidia_gpu
+
+```
+
+This would be the GPU itself, Audio device, USB-C, and serial bus controller attached to the discreet GPU card in slot 2
+All of these devices should be passed through, and added to VFIO.
+
+Device ids: 10de:1f08, 10de:1f09, 10de:1ada, 10de:1adb
+
+## b) Configuring VFIO
+
+### Edit the /etc/initramfs-tools/modules:
+```
+$ sudo nano /etc/initramfs-tools/modules
+```
+
+Add this line:
+vfio vfio_iommu_type1 vfio_virqfd vfio_pci ids=<your ids from step 5.a>
+
+My file now looks like this:
+```
+# List of modules that you want to include in your initramfs.
+# They will be loaded at boot time in the order below.
+#
+# Syntax:  module_name [args ...]
+#
+# You must run update-initramfs(8) to effect this change.
+#
+# Examples:
+#
+# raid1
+# sd_mod
+vfio vfio_iommu_type1 vfio_virqfd vfio_pci ids=10de:1f08,10de:1f09,10de:1ada,10de:1adb
+```
+
+### Edit the /etc/modules file and add vfio vfio_iommu_type1 vfio_pci ids=<your device list>
+
+My file looks like this:
+```
+# /etc/modules: kernel modules to load at boot time.
+#
+# This file contains the names of kernel modules that should be loaded
+# at boot time, one per line. Lines beginning with "#" are ignored.
+vfio vfio_iommu_type1 vfio_pci ids=10de:1f08,10de:1f09,10de:1ada,10de:1adb
+```
+
+### Module loading order
+It is really important that the device is passed to VFIO *before* any host drivers claim it. To ensure this, create a file called nvidia.conf in /etc/modprobe.d:
+
+File content of /etc/modprobe.d/nvidia.conf:
+```
+softdep nouveau pre: vfio-pci 
+softdep nvidia pre: vfio-pci 
+softdep nvidia* pre: vfio-pci
+```
 
 
+### VFIO Config file
+To tell VFIO which devices to use, create a new file /etc/modprobe.d/vfio.conf with this content:
+```
+# VFIO config file
+options vfio-pci ids=10de:1f08,10de:1f09,10de:1ada,10de:1adb
+```
+
+### KVM config
+
+If you plan to run Windows 10 18.03 or later, you must add this line to /etc/modprobe.d/kvm.conf:
+```
+options kvm ignore_msrs=1
+```
+Create a new file if it doen not exist
 
 
+### Update initramfs
+
+To apply all these changes to boot time, rune the following command:
+```
+$ sudo update-initramfs -u -k all
+```
+
+## Reboot
+
+Everything should now be set for a successfull GPU pass through. It is time to reboot, but remember: If you don't have a second graphics card in the machine, you will have NO OUTPUT. The kernel will not try to load a driver for the devices you put in the vfio.conf file
 
 
 
