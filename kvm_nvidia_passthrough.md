@@ -338,7 +338,12 @@ My file now looks like this:
 #
 # raid1
 # sd_mod
-vfio vfio_iommu_type1 vfio_virqfd vfio_pci ids=10de:1f08,10de:1f09,10de:1ada,10de:1adb
+vfio 
+vfio_iommu_type1 
+vfio_virqfd 
+vfio_pci ids=10de:1f08,10de:1f09,10de:1ada,10de:1adb
+vfio_pci
+
 ```
 
 ### Edit the /etc/modules file and add vfio vfio_iommu_type1 vfio_pci ids=<your device list>
@@ -349,7 +354,9 @@ My file looks like this:
 #
 # This file contains the names of kernel modules that should be loaded
 # at boot time, one per line. Lines beginning with "#" are ignored.
-vfio vfio_iommu_type1 vfio_pci ids=10de:1f08,10de:1f09,10de:1ada,10de:1adb
+vfio 
+vfio_iommu_type1 
+vfio_pci ids=10de:1f08,10de:1f09,10de:1ada,10de:1adb
 ```
 
 ### Module loading order
